@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+const App = () => {
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://randomuser.me/api/?page=1&results=1&seed=abc');
+        const data = await response.json();
+        setUserData(data.results[0]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const userImage = userData ? userData.picture.large : null;
+  const userFirstName = userData ? userData.name.first : null;
+  const userLastName = userData ? userData.name.last : null;
+  const userGender = userData ? userData.gender : null;
+  const userPhone = userData ? userData.phone : null;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="flex justify-center items-center h-screen">
+      {userData ? (
+        <div className="flex border-4 border-black p-8">
+          <div className="w-32 h-32 border border-black">
+            <img src={userImage} alt="User" className="w-full h-full object-cover" />
+          </div>
+          <div className="ml-4">
+            <p className="mb-1">Name: {userFirstName} {userLastName}</p>
+            <p className="mt-2">Gender: {userGender}</p>
+            <p className="mt-2">Phone: {userPhone}</p>
+          </div>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
-}
+};
 
 export default App;
